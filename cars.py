@@ -27,8 +27,8 @@ def create_and_update_index(index_name, doc_type):
                     "interest_amount" : {"type": "integer"},
                     "reduction_amount" : {"type": "integer"},
                     "payment_amount" : {"type": "integer"},
-                    "amount_due" : {"type": "integer"},
-                    "fine_amount" : {"type": "integer"}
+                    "amount_due" : {"type": "integer"}
+                
                 }
             }
         }
@@ -85,7 +85,7 @@ if __name__ == "__main__":
 
 
     # Step 2: fetch cars data from the internets
-    docks = get_cars_data("NCsVHjyZOC2quqvnWydS2qdXF", 1000, 10)
+    docks = get_cars_data("NCsVHjyZOC2quqvnWydS2qdXF", 5000, 10)
 
     # Step 3: Push data into the elastic search
     for dock in docks:
@@ -97,6 +97,13 @@ if __name__ == "__main__":
         try:
 
             dock['issue_date_time'] = datetime.strptime(dock['issue_date'] + " " + dock['violation_time'] + "M", '%m/%d/%Y %I:%M%p')
+            dock['fine_amount'] = int(dock['fine_amount'])
+            dock['penalty_amount'] = int(dock['penalty_amount'])
+            dock['interest_amount'] = int(dock['interest_amount'])
+            dock['reduction_amount'] = int(dock['reduction_amount'])
+            dock['amount_due'] = int(dock['amount_due'])
+            dock['penalty_amount'] = int(dock['penalty_amount'])
+
             #dock['issue_date_time'] = datetime.now()
             res = es.index(index='opcv-index', doc_type='cars', body=dock,)
             print(res['result'])
